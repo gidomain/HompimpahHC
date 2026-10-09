@@ -107,31 +107,35 @@ export default function Home() {
           >
             <div className="flex min-h-full flex-col items-center justify-center px-6 py-8">
             <div className="w-full max-w-2xl font-body text-sm text-steel mb-6">
-              <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.2 }} className="text-bone">&gt; INITIALIZING H2C_PROTOCOL...</motion.p>
-              <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.6 }} className="mt-1">&gt; SCANNING FREQUENCY [432Hz]... <span className="text-acid">OK</span></motion.p>
-              <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 1.0 }} className="mt-1">&gt; LOADING SONIC WEAPONS... <span className="text-acid">OK</span></motion.p>
-              <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 1.4 }} className="mt-4 text-acid">&gt; [ ACCESS GRANTED ]</motion.p>
+              <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 1.8 }} className="text-bone">&gt; INITIALIZING H2C_PROTOCOL...</motion.p>
+              <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 2.0 }} className="mt-1">&gt; SCANNING FREQUENCY [432Hz]... <span className="text-acid">OK</span></motion.p>
+              <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 2.2 }} className="mt-1">&gt; LOADING SONIC WEAPONS... <span className="text-acid">OK</span></motion.p>
+              <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 3.0 }} className="mt-4 text-acid">&gt; [ ACCESS GRANTED ]</motion.p>
             </div>
 
-            <img
+            <motion.img
               src="/HompimpahHC/logo-h2c.png"
               alt="H2C"
+              initial={{ opacity: 0, scale: 0.9, rotateY: 0 }}
+              animate={{ opacity: 1, scale: 1, rotateY: 360 }}
+              transition={{ duration: 1.6, ease: "easeInOut" }}
               className="w-[40vw] max-w-xs"
+              style={{ transformStyle: "preserve-3d", willChange: "transform, opacity" }}
             />
 
-            <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 2.4 }} className="text-steel text-[10px] tracking-[0.5em] mt-8 mb-10">HOMPIMPAH HARDCORE</motion.p>
+            <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 3.0 }} className="text-steel text-[10px] tracking-[0.5em] mt-8 mb-10">HOMPIMPAH HARDCORE</motion.p>
 
             <motion.button
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 2.6 }}
+              transition={{ delay: 3.0 }}
               onClick={handleEnter}
               className="group border-2 border-acid text-acid px-10 py-4 tracking-[0.3em] uppercase hover:bg-acid hover:text-void transition-all duration-500 flex items-center gap-3"
             >
               <Volume2 className="w-5 h-5 group-hover:scale-110 transition-transform" />
               [ MASUK ]
             </motion.button>
-            <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 2.8 }} className="mt-6 text-steel text-[10px] tracking-widest">AUDIO AKAN OTOMATIS DIPUTAR</motion.p>
+            <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 3.0 }} className="mt-6 text-steel text-[10px] tracking-widest">AUDIO AKAN OTOMATIS DIPUTAR</motion.p>
           
           </div>
         </motion.div>
