@@ -232,7 +232,12 @@ export default function Home() {
                       style={{ filter: 'contrast(1.1)' }}
                     />
 
-                    <AnimatedText text="H2C HARDCORE: BOGOR'S UNIT HARDCORE" as="h2" className="brutal-text text-2xl md:text-4xl leading-tight text-bone" delay={0.6} />
+                   <AnimatedText 
+  text="H2C HARDCORE: BOGOR'S UNIT HARDCORE" 
+  as="h2" 
+  className="brutal-text text-lg md:text-4xl leading-tight text-bone" 
+  delay={0.6} 
+/>
                   </div> 
                 <motion.div initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 1.2, duration: 0.8 }} className="md:col-span-4 text-sm text-steel leading-relaxed">
                   <p>Alright, dengerin baik-baik. Ini bukan sekadar band, ini H2C unit Hardcore. Datang dari hiruk-pikuk Bogor yang sering lo kira cuma adem-ayem, mereka adalah anjing liar yang siap merobek telinga dengan brutalitas yang jujur dan tanpa kompromi. Lupain sound-sound manis atau lirik yang dibungkus rapi. H2C Hardcore ini anti-mainstream, bro. Mereka nyerang dengan riff-riff serrated-edge, pukulan drum yang bikin rusuk lo bergetar, dan vokal yang teriak dengan penuh amarah tentang protes di jalanan, bukan tentang musik cinta catchy, tapi tentang kekuatan mental yang mendobrak batas. Lirik-lirik mereka? Ini bukan puisi-puisi curhatan remaja. H2C Hardcore ini menantang status kemunafikan, kepalsuan hidup, dan realita pahit yang sering lo coba hindari. Mereka adalah suara bagi yang muak, bagi yang merasa ditindas, dan bagi mereka yang berani mempertanyakan status quo. Mereka nggak bakal basa-basi, nggak takut beda, dan nggak peduli lo suka atau nggak.</p>
