@@ -43,7 +43,7 @@ function AnimatedText({
   const letters = text.split("");
   return (
     <Tag className={className}>
-      {letters.map((char, i) => (
+      {letters.map((char: string, i: number) => (
         <motion.span
           key={i}
           initial={{ opacity: 0, y: 40, rotateX: -90 }}
@@ -113,7 +113,7 @@ export default function Home() {
             </div>
 
             <img
-              src="/logo-h2c.png"
+              src="/HompimpahHC/logo-h2c.png"
               alt="H2C"
               className="w-[60vw] max-w-md"
             />
@@ -161,7 +161,7 @@ export default function Home() {
               <div className="grid md:grid-cols-12 gap-8 items-end">
                 <div className="md:col-span-8">
                   <img
-                    src="/logo-h2c.png"
+                    src="/HompimpahHC/logo-h2c.png"
                     alt="Hompimpah Hardcore"
                     className="w-full max-w-3xl mb-6"
                   />
