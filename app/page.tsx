@@ -1,22 +1,29 @@
-"use client";
+﻿"use client";
 
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useRef, useEffect, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Play, Pause, MapPin, ArrowUpRight, Volume2, Instagram, Youtube, Music, Mail } from "lucide-react";
+import { Play, Pause, MapPin, ArrowUpRight, Volume2, Instagram, Youtube, Music, Mail, SkipBack, SkipForward } from "lucide-react";
+import ReflexShowreel from "@/components/ReflexShowreel";
 
-const AUDIO_URL = "/HompimpahHC/audio/track-01.mp4";
+const TRACKS = [
+  { src: "/HompimpahHC/audio/track-01.mp4", title: "Lawan Adalah Kunci", num: "01" },
+  { src: "/HompimpahHC/audio/track-02.mp3", title: "Hari Ini Milik Kita", num: "02" },
+  { src: "/HompimpahHC/audio/track-03.mp3", title: "Hardolin",           num: "03" },
+  { src: "/HompimpahHC/audio/track-04.mp3", title: "Stand Up Wake Up",   num: "04" },
+];
 
 const ARTISTS = [
-  { name: "Muhammad Ade Mulya", role: "VOKAL", quote: "Suara adalah senjata." },
-  { name: "Adam", role: "GITAR", quote: "Riff bukan dekorasi." },
-  { name: "Tisen 88", role: "BASS", quote: "Low-end yang menggetarkan." },
-  { name: "Fachrizal", role: "DRUM", quote: "Chaos butuh beat." },
+  { name: "Ademura",   role: "VOKAL",  quote: "Suara adalah senjata.",       img: "/HompimpahHC/crew/ademura.jpg" },
+  { name: "Tissen 88", role: "GITAR",  quote: "Riff bukan dekorasi.",         img: "/HompimpahHC/crew/tissen.jpg" },
+  { name: "Adam",      role: "GUITAR", quote: "Distosi yang menggetarkan.",   img: "/HompimpahHC/crew/adam.jpg" },
+  { name: "Fachrizal", role: "DRUM",   quote: "Chaos butuh beat.",            img: "/HompimpahHC/crew/fachrizal.jpg" },
+  { name: "Boby",      role: "BASS",   quote: "Low-end yang menggetarkan.",   img: "/HompimpahHC/crew/boby.jpg" },
 ];
 
 const RELEASES = [
-  { title: "MANIFESTO", year: 2024, type: "LP", tracks: 10, dur: "42:18" },
-  { title: "KOTA TERBAKAR", year: 2023, type: "EP", tracks: 5, dur: "18:42" },
-  { title: "SUARA DARI BAWAH", year: 2022, type: "Single", tracks: 1, dur: "3:47" },
+  { title: "Lawan Adalah Kunci", year: 2024, type: "LP", tracks: 10, dur: "42:18" },
+  { title: "Haari Ini Milik Kita", year: 2023, type: "EP", tracks: 5, dur: "18:42" },
+  { title: "Hardolin", year: 2022, type: "Single", tracks: 1, dur: "3:47" },
 ];
 
 const SHOWS = [
@@ -61,11 +68,13 @@ function AnimatedText({
 
 export default function Home() {
   const [entered, setEntered] = useState(false);
-  const [transitioning, setTransitioning] = useState(false);
+  const [showReel, setShowReel] = useState(false);
   const [scanOks, setScanOks] = useState<[boolean, boolean, boolean, boolean]>([false, false, false, false]);
   const [playing, setPlaying] = useState(false);
   const [progress, setProgress] = useState(0);
+  const [currentTrack, setCurrentTrack] = useState(0);
   const audioRef = useRef<HTMLAudioElement>(null);
+
   useEffect(() => {
     const el = audioRef.current;
     if (!el) return;
@@ -84,15 +93,24 @@ export default function Home() {
     return () => { clearTimeout(t1); clearTimeout(t2); clearTimeout(t3); clearTimeout(t4); };
   }, []);
 
+  // Auto-play saat ganti track (kalau sebelumnya playing)
+  useEffect(() => {
+    const el = audioRef.current;
+    if (!el) return;
+    setProgress(0);
+    el.load();
+    if (playing) {
+      el.play().catch(() => {});
+    }
+  }, [currentTrack]);
+
   const handleEnter = () => {
     setPlaying(true);
     if (audioRef.current) {
       audioRef.current.volume = 0.4;
       audioRef.current.play().catch((e) => console.log("Blocked:", e));
     }
-    setEntered(true);
-    setTransitioning(true);
-    setTimeout(() => setTransitioning(false), 4400);
+    setShowReel(true);
   };
 
   const togglePlay = () => {
@@ -102,13 +120,30 @@ export default function Home() {
     setPlaying(!playing);
   };
 
+  const nextTrack = useCallback(() => {
+    setCurrentTrack((i) => (i + 1) % TRACKS.length);
+  }, []);
+
+  const prevTrack = useCallback(() => {
+    setCurrentTrack((i) => (i - 1 + TRACKS.length) % TRACKS.length);
+  }, []);
+
+  const handleReelComplete = useCallback(() => {
+    setShowReel(false);
+    setEntered(true);
+  }, []);
+
   return (
     <div className="min-h-screen bg-void text-bone font-body relative">
-      <audio ref={audioRef} src={AUDIO_URL} loop />
+      <audio
+        ref={audioRef}
+        src={TRACKS[currentTrack].src}
+        onEnded={nextTrack}
+      />
       <div className="scanlines fixed inset-0 z-[60] mix-blend-overlay" />
 
       <AnimatePresence>
-        {!entered && !transitioning && (
+        {!entered && !showReel && (
           <motion.div
             exit={{ opacity: 0, filter: "blur(20px)" }}
             transition={{ duration: 0.8, ease: "easeInOut" }}
@@ -116,9 +151,9 @@ export default function Home() {
           >
             <div className="flex min-h-full flex-col items-center justify-center px-6 py-8">
             <div className="w-full max-w-2xl font-body text-sm text-steel mb-6">
-              <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 1.8 }} className="text-bone">&gt; INITIALIZING H2C_PROTOCOL... <motion.span initial={{ opacity: 0 }} animate={{ opacity: scanOks[0] ? 1 : 0 }} transition={{ duration: 0.2 }} className="text-acid">OK</motion.span></motion.p>
+              <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 1.8 }} className="text-bone">&gt; INITIALIZING H2C POWERD BY NUGIST... <motion.span initial={{ opacity: 0 }} animate={{ opacity: scanOks[0] ? 1 : 0 }} transition={{ duration: 0.2 }} className="text-acid">OK</motion.span></motion.p>
               <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 3.1 }} className="mt-1">&gt; SCANNING FREQUENCY [432Hz]... <motion.span initial={{ opacity: 0 }} animate={{ opacity: scanOks[1] ? 1 : 0 }} transition={{ duration: 0.2 }} className="text-acid">OK</motion.span></motion.p>
-              <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 4.4 }} className="mt-1">&gt; LOADING SONIC WEAPONS... <motion.span initial={{ opacity: 0 }} animate={{ opacity: scanOks[2] ? 1 : 0 }} transition={{ duration: 0.2 }} className="text-acid">OK</motion.span></motion.p>
+              <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 4.4 }} className="mt-1">&gt; LOADING H2C BOGOR UNIT HARDCORE... <motion.span initial={{ opacity: 0 }} animate={{ opacity: scanOks[2] ? 1 : 0 }} transition={{ duration: 0.2 }} className="text-acid">OK</motion.span></motion.p>
               <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 5.7 }} className="mt-4">&gt; [ <motion.span initial={{ color: "#dc2626" }} animate={{ color: scanOks[3] ? "#22c55e" : "#dc2626" }} transition={{ duration: 0.4 }}>ACCESS GRANTED</motion.span> ]</motion.p>
             </div>
 
@@ -132,7 +167,7 @@ export default function Home() {
               style={{ transformStyle: "preserve-3d", willChange: "transform, opacity" }}
             />
 
-            <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 6.9 }} className="text-steel text-[10px] tracking-[0.5em] mt-8 mb-10">HOMPIMPAH HARDCORE</motion.p>
+            <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 6.9 }} className="text-steel text-[10px] tracking-[0.5em] mt-8 mb-10">H2C HARDCORE</motion.p>
 
             <motion.button
               initial={{ opacity: 0, y: 20 }}
@@ -145,76 +180,14 @@ export default function Home() {
               [ MASUK ]
             </motion.button>
             <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 7.3 }} className="mt-3 text-steel text-[10px] tracking-widest">Welcome to H2C</motion.p>
-          
+
           </div>
         </motion.div>
         )}
       </AnimatePresence>
 
-      {transitioning && (
-        <motion.div
-          key="transition"
-          initial={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
-          transition={{ duration: 0.2 }}
-          className="fixed inset-0 z-[200] pointer-events-none overflow-hidden bg-void-deep"
-        >
-          <motion.img
-            src="/HompimpahHC/logo-h2c.png"
-            alt="H2C"
-            className="absolute top-1/2 left-1/2 w-[40vw] max-w-xs"
-            style={{ x: "-50%", y: "-50%", transformStyle: "preserve-3d", willChange: "transform, opacity" }}
-            initial={{ scale: 1, rotateY: 0, opacity: 1 }}
-            animate={{
-              scale: [1, 25, 25, 25],
-              rotateY: [0, 1080, 1080, 1080],
-              opacity: [1, 1, 0, 0]
-            }}
-            transition={{ duration: 4.4, times: [0, 0.52, 0.57, 1], ease: [0.7, 0, 0.3, 1] }}
-          />
-
-          <motion.div
-            className="absolute inset-0 bg-white"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: [0, 0, 1, 1, 0, 0] }}
-            transition={{ duration: 4.4, times: [0, 0.57, 0.6, 0.63, 0.65, 1], ease: "easeInOut" }}
-            style={{ willChange: "opacity" }}
-          />
-
-          <motion.div
-            className="absolute inset-0 bg-void-deep"
-            initial={{ opacity: 0, clipPath: "inset(0% 0% 0% 0%)" }}
-            animate={{
-              opacity: [0, 0, 1, 1, 1, 1],
-              clipPath: [
-                "inset(0% 0% 0% 0%)",
-                "inset(0% 0% 0% 0%)",
-                "inset(0% 0% 0% 0%)",
-                "inset(0% 0% 0% 0%)",
-                "inset(50% 0% 50% 0%)",
-                "inset(50% 0% 50% 0%)"
-              ]
-            }}
-            transition={{ duration: 4.4, times: [0, 0.65, 0.71, 0.82, 0.98, 1], ease: [0.6, 0, 0.4, 1] }}
-            style={{ willChange: "opacity, clip-path" }}
-          />
-
-          <motion.div
-            className="absolute left-0 right-0 h-[3px] bg-white"
-            initial={{ top: "50%", opacity: 0 }}
-            animate={{ top: ["50%", "50%", "0%"], opacity: [0, 0, 1, 0] }}
-            transition={{ duration: 0.9, times: [0, 0.1, 0.85, 1], delay: 3.6, ease: "easeOut" }}
-            style={{ boxShadow: "0 0 30px 8px rgba(255,255,255,0.95)", willChange: "top, opacity" }}
-          />
-
-          <motion.div
-            className="absolute inset-0 pointer-events-none"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: [0, 0, 0.6, 0] }}
-            transition={{ duration: 1.0, times: [0, 0.75, 0.85, 1], delay: 3.4, ease: "easeOut" }}
-            style={{ backgroundImage: "repeating-linear-gradient(0deg, rgba(255,255,255,0.15) 0px, transparent 2px, transparent 4px)", willChange: "opacity" }}
-          />
-        </motion.div>
+      {showReel && (
+        <ReflexShowreel onComplete={handleReelComplete} />
       )}
 
       {entered && (
@@ -238,22 +211,34 @@ export default function Home() {
 
           <motion.section className="min-h-screen flex flex-col justify-center px-6 md:px-10 pt-24 relative">
             <div className="max-w-7xl mx-auto w-full">
-              <motion.p initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.3 }} className="text-[10px] tracking-[0.5em] text-acid mb-8">EST. 2019 // JAKARTA, INDONESIA</motion.p>
+              <motion.p initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.3 }} className="text-[10px] tracking-[0.5em] text-acid mb-8">EST. 2014 // BOGOR, INDONESIA</motion.p>
 
               <div className="grid md:grid-cols-12 gap-8 items-end">
-                <div className="md:col-span-8">
-                  <img
-                    src="/HompimpahHC/logo-h2c.png"
-                    alt="Hompimpah Hardcore"
-                    className="w-full max-w-3xl mb-6"
-                  />
-                  <AnimatedText text="GANGGUAN DALAM SISTEM" as="h2" className="brutal-text text-2xl md:text-4xl leading-tight text-bone" delay={0.6} />
-                </div>
+                                <div className="md:col-span-8">
+                    {/* <img
+                      src="/HompimpahHC/logo-h2c.png"
+                      alt="H2C Hardcore"
+                      className="w-full max-w-3xl mb-6"
+                    /> */}
+
+                    {/* Hero art — ilustrasi komik */}
+                    <motion.img
+                      src="/HompimpahHC/hero-art.png"
+                      alt="H2C Resistensi"
+                      initial={{ opacity: 0, y: 40, scale: 0.95 }}
+                      animate={{ opacity: 1, y: 0, scale: 1 }}
+                      transition={{ delay: 0.4, duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
+                      className="w-full max-w-2xl mb-8 mix-blend-screen"
+                      style={{ filter: 'contrast(1.1)' }}
+                    />
+
+                    <AnimatedText text="H2C HARDCORE: BOGOR'S UNIT HARDCORE" as="h2" className="brutal-text text-2xl md:text-4xl leading-tight text-bone" delay={0.6} />
+                  </div> 
                 <motion.div initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 1.2, duration: 0.8 }} className="md:col-span-4 text-sm text-steel leading-relaxed">
-                  <p>Hompimpah Hardcore - dibentuk di sela-sela hiruk-pikuk Jakarta. Suara yang lahir dari kemarahan, kebosanan, dan keinginan untuk mengganggu ketenangan.</p>
-                  <p className="mt-3">Kami main di basement, cafe kecil, dan panggung yang lampunya mati.</p>
+                  <p>Alright, dengerin baik-baik. Ini bukan sekadar band, ini H2C unit Hardcore. Datang dari hiruk-pikuk Bogor yang sering lo kira cuma adem-ayem, mereka adalah anjing liar yang siap merobek telinga dengan brutalitas yang jujur dan tanpa kompromi. Lupain sound-sound manis atau lirik yang dibungkus rapi. H2C Hardcore ini anti-mainstream, bro. Mereka nyerang dengan riff-riff serrated-edge, pukulan drum yang bikin rusuk lo bergetar, dan vokal yang teriak dengan penuh amarah tentang protes di jalanan, bukan tentang musik cinta catchy, tapi tentang kekuatan mental yang mendobrak batas. Lirik-lirik mereka? Ini bukan puisi-puisi curhatan remaja. H2C Hardcore ini menantang status kemunafikan, kepalsuan hidup, dan realita pahit yang sering lo coba hindari. Mereka adalah suara bagi yang muak, bagi yang merasa ditindas, dan bagi mereka yang berani mempertanyakan status quo. Mereka nggak bakal basa-basi, nggak takut beda, dan nggak peduli lo suka atau nggak.</p>
+                  <p className="mt-3">Jadi, kalo lo nyari band yang bisa jadi soundtrack buat revolusi pribadi lo, buat malam-malam penuh kekesalan, atau cuma buat sekadar pengen ngegas energi hardcore yang asli dan nggak dibikin-bikin, Hompimpaah Hardcore adalah jawabannya. Mereka bukan cuma sekadar musik, mereka adalah pemberontakan, mereka mengguncang lo, dan mereka ada di sini bikin mikir dua kali tentang semua yang lo yakini. H2C Hardcore, ini bukan cuma musik moshpit, ini perlawanan.</p>
                 </motion.div>
-              </div>
+              </div>  
 
               <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 1.5 }} className="flex flex-wrap gap-3 mt-14">
                 <a href="#music" className="group bg-acid text-void px-8 py-4 text-[10px] tracking-[0.3em] hover:bg-bone transition-colors flex items-center gap-2">
@@ -282,8 +267,8 @@ export default function Home() {
           </div>
 
           <section id="crew" className="px-6 md:px-10 py-28">
-            <SectionHeader index="01" title="THE CREW" />
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mt-16">
+            <SectionHeader index="01" title="Artist" />
+           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4 lg:gap-5 mt-16">
               {ARTISTS.map((m, i) => (
                 <motion.div
                   key={m.name}
@@ -294,10 +279,16 @@ export default function Home() {
                   whileHover={{ y: -12 }}
                   className="group border border-steel/30 hover:border-acid transition-colors bg-void-deep/50 overflow-hidden"
                 >
-                  <div className="aspect-[3/4] bg-steel/10 flex items-end p-4 relative overflow-hidden">
-                    <div className="absolute inset-0 scanlines opacity-40" />
-                    <div className="absolute inset-0 bg-gradient-to-t from-void-deep via-transparent to-transparent" />
-                    <span className="editorial-text text-[8rem] text-bone/10 group-hover:text-acid/20 transition-colors leading-none relative z-10">{String(i + 1).padStart(2, "0")}</span>
+                  <div className="aspect-[3/4] bg-steel/10 relative overflow-hidden">
+                    <img
+                      src={m.img}
+                      alt={m.name}
+                      loading="lazy"
+                      className="absolute inset-0 w-full h-full object-cover object-top group-hover:scale-105 transition-transform duration-700 ease-out"
+                    />
+                    <div className="absolute inset-0 scanlines opacity-30 pointer-events-none" />
+                    <div className="absolute inset-0 bg-gradient-to-t from-void-deep via-void-deep/30 to-transparent pointer-events-none" />
+                    <span className="editorial-text text-[8rem] text-bone/15 group-hover:text-acid/30 transition-colors leading-none absolute bottom-4 right-4 z-10">{String(i + 1).padStart(2, "0")}</span>
                   </div>
                   <div className="p-6">
                     <p className="text-[10px] tracking-[0.4em] text-acid mb-2">{m.role}</p>
@@ -393,12 +384,12 @@ export default function Home() {
               <div className="absolute top-0 left-0 w-full h-1 bg-acid" />
               <form className="flex flex-col gap-6 text-sm">
                 <div className="grid md:grid-cols-2 gap-6">
-                  <Field label="NAMA" placeholder="John Doe" />
-                  <Field label="EMAIL" placeholder="john@example.com" type="email" />
+                  <Field label="NAMA" placeholder="Nugist" />
+                  <Field label="EMAIL" placeholder="Nugist@gidomain.com" type="email" />
                 </div>
                 <div>
                   <label className="text-[10px] tracking-[0.3em] text-steel block mb-2">PESAN</label>
-                  <textarea rows={5} className="w-full bg-transparent border border-steel focus:border-acid outline-none p-3 text-bone resize-none transition-colors" placeholder="Tulis pesan kamu..." />
+                  <textarea rows={5} className="w-full bg-transparent border border-steel focus:border-acid outline-none p-3 text-bone resize-none transition-colors" placeholder="Ga Usah Banyak Basa Basi Birokrasi..." />
                 </div>
                 <button type="button" className="bg-acid text-void py-4 tracking-[0.3em] hover:bg-bone transition-colors text-xs">[ KIRIM PESAN ]</button>
               </form>
@@ -406,26 +397,35 @@ export default function Home() {
           </section>
 
           <footer className="px-6 md:px-10 py-16 border-t border-steel/30 text-center">
-            <AnimatedText text="H2C" as="p" className="editorial-text text-7xl md:text-9xl text-bone" />
-            <p className="text-[10px] tracking-[0.5em] text-steel mt-4">HOMPIMPAH HARDCORE // EST. 2019</p>
+           <img
+  src="/HompimpahHC/logo-h2c.png"
+  alt="H2C"
+  className="w-48 md:w-64 mx-auto"
+/>
+            <p className="text-[10px] tracking-[0.5em] text-steel mt-4">H2C HARDCORE // EST. 2014</p>
             <div className="flex justify-center gap-8 mt-8 text-steel">
-              <a href="#" className="hover:text-acid transition-colors"><Instagram className="w-5 h-5" /></a>
-              <a href="#" className="hover:text-acid transition-colors"><Youtube className="w-5 h-5" /></a>
+<a href="https://instagram.com/h2c.hardcore" target="_blank" rel="noopener noreferrer" className="hover:text-acid transition-colors"><Instagram className="w-5 h-5" /></a>              <a href="#" className="hover:text-acid transition-colors"><Youtube className="w-5 h-5" /></a>
               <a href="#" className="hover:text-acid transition-colors"><Music className="w-5 h-5" /></a>
               <a href="#" className="hover:text-acid transition-colors"><Mail className="w-5 h-5" /></a>
             </div>
-            <p className="text-[10px] text-steel/50 mt-10">Copyright 2024 H2C. ALL RIGHTS RESERVED.</p>
+            <p className="text-[10px] text-steel/50 mt-10">Copyright 2026 H2C. ALL RIGHTS RESERVED. POWERD BY NUGIST</p>
           </footer>
 
           <div className="fixed bottom-0 inset-x-0 z-50 border-t-2 border-acid bg-void-deep/95 backdrop-blur-md">
-            <div className="max-w-7xl mx-auto px-4 md:px-8 py-3 flex items-center gap-4">
+            <div className="max-w-7xl mx-auto px-4 md:px-8 py-3 flex items-center gap-2 md:gap-4">
+              <button onClick={prevTrack} className="w-10 h-10 md:w-12 md:h-12 grid place-items-center border border-acid text-acid hover:bg-acid hover:text-void transition-colors shrink-0" aria-label="Previous">
+                <SkipBack className="w-4 h-4 md:w-5 md:h-5" />
+              </button>
               <button onClick={togglePlay} className="w-12 h-12 grid place-items-center bg-acid text-void hover:bg-bone transition-colors shrink-0" aria-label={playing ? "Pause" : "Play"}>
                 {playing ? <Pause className="w-5 h-5" /> : <Play className="w-5 h-5" />}
               </button>
+              <button onClick={nextTrack} className="w-10 h-10 md:w-12 md:h-12 grid place-items-center border border-acid text-acid hover:bg-acid hover:text-void transition-colors shrink-0" aria-label="Next">
+                <SkipForward className="w-4 h-4 md:w-5 md:h-5" />
+              </button>
               <div className="flex-1 min-w-0 flex items-center gap-4">
-                <div className="hidden md:flex flex-col min-w-0 w-40">
+                <div className="hidden md:flex flex-col min-w-0 w-52">
                   <span className="text-[9px] tracking-[0.3em] text-acid">NOW PLAYING</span>
-                  <span className="editorial-text text-lg text-bone truncate leading-none">MANIFESTO - 01</span>
+                  <span className="editorial-text text-lg text-bone truncate leading-none">{TRACKS[currentTrack].title} - {TRACKS[currentTrack].num}</span>
                 </div>
                 <div className="flex-1 h-10 flex items-center gap-[2px] min-w-0">
                   {Array.from({ length: 56 }).map((_, i) => (
@@ -481,5 +481,3 @@ function Field({ label, placeholder, type = "text" }: { label: string; placehold
     </div>
   );
 }
-
-
