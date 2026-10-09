@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useRef, useEffect } from "react";
-import { motion, AnimatePresence, useScroll, useTransform } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import { Play, Pause, MapPin, ArrowUpRight, Volume2, Instagram, Youtube, Music, Mail } from "lucide-react";
 
 const AUDIO_URL = "/HompimpahHC/audio/track-01.mp4";
@@ -61,12 +61,11 @@ function AnimatedText({
 
 export default function Home() {
   const [entered, setEntered] = useState(false);
+  const [transitioning, setTransitioning] = useState(false);
+  const [scanOks, setScanOks] = useState<[boolean, boolean, boolean, boolean]>([false, false, false, false]);
   const [playing, setPlaying] = useState(false);
   const [progress, setProgress] = useState(0);
   const audioRef = useRef<HTMLAudioElement>(null);
-  const { scrollYProgress } = useScroll();
-  const heroOpacity = useTransform(scrollYProgress, [0, 0.15], [1, 0]);
-
   useEffect(() => {
     const el = audioRef.current;
     if (!el) return;
@@ -77,13 +76,23 @@ export default function Home() {
     return () => el.removeEventListener("timeupdate", update);
   }, []);
 
+  useEffect(() => {
+    const t1 = setTimeout(() => setScanOks([true, false, false, false]), 2800);
+    const t2 = setTimeout(() => setScanOks([true, true, false, false]), 4100);
+    const t3 = setTimeout(() => setScanOks([true, true, true, false]), 5400);
+    const t4 = setTimeout(() => setScanOks([true, true, true, true]), 6600);
+    return () => { clearTimeout(t1); clearTimeout(t2); clearTimeout(t3); clearTimeout(t4); };
+  }, []);
+
   const handleEnter = () => {
-    setEntered(true);
     setPlaying(true);
     if (audioRef.current) {
       audioRef.current.volume = 0.4;
       audioRef.current.play().catch((e) => console.log("Blocked:", e));
     }
+    setEntered(true);
+    setTransitioning(true);
+    setTimeout(() => setTransitioning(false), 4400);
   };
 
   const togglePlay = () => {
@@ -99,7 +108,7 @@ export default function Home() {
       <div className="scanlines fixed inset-0 z-[60] mix-blend-overlay" />
 
       <AnimatePresence>
-        {!entered && (
+        {!entered && !transitioning && (
           <motion.div
             exit={{ opacity: 0, filter: "blur(20px)" }}
             transition={{ duration: 0.8, ease: "easeInOut" }}
@@ -107,10 +116,10 @@ export default function Home() {
           >
             <div className="flex min-h-full flex-col items-center justify-center px-6 py-8">
             <div className="w-full max-w-2xl font-body text-sm text-steel mb-6">
-              <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 1.8 }} className="text-bone">&gt; INITIALIZING H2C_PROTOCOL...</motion.p>
-              <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 2.0 }} className="mt-1">&gt; SCANNING FREQUENCY [432Hz]... <span className="text-acid">OK</span></motion.p>
-              <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 2.2 }} className="mt-1">&gt; LOADING SONIC WEAPONS... <span className="text-acid">OK</span></motion.p>
-              <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 3.0 }} className="mt-4 text-acid">&gt; [ ACCESS GRANTED ]</motion.p>
+              <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 1.8 }} className="text-bone">&gt; INITIALIZING H2C_PROTOCOL... <motion.span initial={{ opacity: 0 }} animate={{ opacity: scanOks[0] ? 1 : 0 }} transition={{ duration: 0.2 }} className="text-acid">OK</motion.span></motion.p>
+              <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 3.1 }} className="mt-1">&gt; SCANNING FREQUENCY [432Hz]... <motion.span initial={{ opacity: 0 }} animate={{ opacity: scanOks[1] ? 1 : 0 }} transition={{ duration: 0.2 }} className="text-acid">OK</motion.span></motion.p>
+              <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 4.4 }} className="mt-1">&gt; LOADING SONIC WEAPONS... <motion.span initial={{ opacity: 0 }} animate={{ opacity: scanOks[2] ? 1 : 0 }} transition={{ duration: 0.2 }} className="text-acid">OK</motion.span></motion.p>
+              <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 5.7 }} className="mt-4">&gt; [ <motion.span initial={{ color: "#dc2626" }} animate={{ color: scanOks[3] ? "#22c55e" : "#dc2626" }} transition={{ duration: 0.4 }}>ACCESS GRANTED</motion.span> ]</motion.p>
             </div>
 
             <motion.img
@@ -123,24 +132,90 @@ export default function Home() {
               style={{ transformStyle: "preserve-3d", willChange: "transform, opacity" }}
             />
 
-            <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 3.0 }} className="text-steel text-[10px] tracking-[0.5em] mt-8 mb-10">HOMPIMPAH HARDCORE</motion.p>
+            <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 6.9 }} className="text-steel text-[10px] tracking-[0.5em] mt-8 mb-10">HOMPIMPAH HARDCORE</motion.p>
 
             <motion.button
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 3.0 }}
+              transition={{ delay: 7.1 }}
               onClick={handleEnter}
               className="group border-2 border-acid text-acid px-10 py-4 tracking-[0.3em] uppercase hover:bg-acid hover:text-void transition-all duration-500 flex items-center gap-3"
             >
               <Volume2 className="w-5 h-5 group-hover:scale-110 transition-transform" />
               [ MASUK ]
             </motion.button>
-            <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 3.0 }} className="mt-6 text-steel text-[10px] tracking-widest">AUDIO AKAN OTOMATIS DIPUTAR</motion.p>
+            <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 7.3 }} className="mt-3 text-steel text-[10px] tracking-widest">Welcome to H2C</motion.p>
           
           </div>
         </motion.div>
         )}
       </AnimatePresence>
+
+      {transitioning && (
+        <motion.div
+          key="transition"
+          initial={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          transition={{ duration: 0.2 }}
+          className="fixed inset-0 z-[200] pointer-events-none overflow-hidden bg-void-deep"
+        >
+          <motion.img
+            src="/HompimpahHC/logo-h2c.png"
+            alt="H2C"
+            className="absolute top-1/2 left-1/2 w-[40vw] max-w-xs"
+            style={{ x: "-50%", y: "-50%", transformStyle: "preserve-3d", willChange: "transform, opacity" }}
+            initial={{ scale: 1, rotateY: 0, opacity: 1 }}
+            animate={{
+              scale: [1, 25, 25, 25],
+              rotateY: [0, 1080, 1080, 1080],
+              opacity: [1, 1, 0, 0]
+            }}
+            transition={{ duration: 4.4, times: [0, 0.52, 0.57, 1], ease: [0.7, 0, 0.3, 1] }}
+          />
+
+          <motion.div
+            className="absolute inset-0 bg-white"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: [0, 0, 1, 1, 0, 0] }}
+            transition={{ duration: 4.4, times: [0, 0.57, 0.6, 0.63, 0.65, 1], ease: "easeInOut" }}
+            style={{ willChange: "opacity" }}
+          />
+
+          <motion.div
+            className="absolute inset-0 bg-void-deep"
+            initial={{ opacity: 0, clipPath: "inset(0% 0% 0% 0%)" }}
+            animate={{
+              opacity: [0, 0, 1, 1, 1, 1],
+              clipPath: [
+                "inset(0% 0% 0% 0%)",
+                "inset(0% 0% 0% 0%)",
+                "inset(0% 0% 0% 0%)",
+                "inset(0% 0% 0% 0%)",
+                "inset(50% 0% 50% 0%)",
+                "inset(50% 0% 50% 0%)"
+              ]
+            }}
+            transition={{ duration: 4.4, times: [0, 0.65, 0.71, 0.82, 0.98, 1], ease: [0.6, 0, 0.4, 1] }}
+            style={{ willChange: "opacity, clip-path" }}
+          />
+
+          <motion.div
+            className="absolute left-0 right-0 h-[3px] bg-white"
+            initial={{ top: "50%", opacity: 0 }}
+            animate={{ top: ["50%", "50%", "0%"], opacity: [0, 0, 1, 0] }}
+            transition={{ duration: 0.9, times: [0, 0.1, 0.85, 1], delay: 3.6, ease: "easeOut" }}
+            style={{ boxShadow: "0 0 30px 8px rgba(255,255,255,0.95)", willChange: "top, opacity" }}
+          />
+
+          <motion.div
+            className="absolute inset-0 pointer-events-none"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: [0, 0, 0.6, 0] }}
+            transition={{ duration: 1.0, times: [0, 0.75, 0.85, 1], delay: 3.4, ease: "easeOut" }}
+            style={{ backgroundImage: "repeating-linear-gradient(0deg, rgba(255,255,255,0.15) 0px, transparent 2px, transparent 4px)", willChange: "opacity" }}
+          />
+        </motion.div>
+      )}
 
       {entered && (
         <motion.main
@@ -161,7 +236,7 @@ export default function Home() {
             </div>
           </nav>
 
-          <motion.section style={{ opacity: heroOpacity }} className="min-h-screen flex flex-col justify-center px-6 md:px-10 pt-24 relative">
+          <motion.section className="min-h-screen flex flex-col justify-center px-6 md:px-10 pt-24 relative">
             <div className="max-w-7xl mx-auto w-full">
               <motion.p initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.3 }} className="text-[10px] tracking-[0.5em] text-acid mb-8">EST. 2019 // JAKARTA, INDONESIA</motion.p>
 
