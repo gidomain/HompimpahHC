@@ -2,8 +2,8 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "H2C // Hompimpah Hardcore",
-  description: "Raw energy. Future anarchy. Hardcore band from Indonesia.",
+  title: "H2C",
+  description: "Raw energy. Future anarchy. Hardcore band from Bogor, Indonesia.",
 };
 
 export default function RootLayout({

@@ -14,14 +14,14 @@ body {
   font-family: 'JetBrains Mono', monospace;
 }
 
-/* DOT PATTERN — referensi ke shading dot di logo */
+/* DOT PATTERN â€” referensi ke shading dot di logo */
 .dot-pattern {
   background-image: radial-gradient(circle, #E8E4D9 1px, transparent 1px);
   background-size: 6px 6px;
   opacity: 0.08;
 }
 
-/* HALFTONE GRADIENT — shading dot yang makin rapat */
+/* HALFTONE GRADIENT â€” shading dot yang makin rapat */
 .halftone-fade::after {
   content: "";
   position: absolute;
@@ -37,7 +37,7 @@ body {
   pointer-events: none;
 }
 
-/* LOGO MIX BLEND — biar logo putih nyatu dengan background */
+/* LOGO MIX BLEND â€” biar logo putih nyatu dengan background */
 .logo-blend {
   mix-blend-mode: multiply;
   filter: invert(1) brightness(1.1);
@@ -135,4 +135,13 @@ body {
   font-family: 'Anton', sans-serif;
   letter-spacing: -0.01em;
   line-height: 0.95;
+}
+/* Sembunyikan scrollbar global — scroll tetap berfungsi */
+html, body {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+html::-webkit-scrollbar,
+body::-webkit-scrollbar {
+  display: none;
 }

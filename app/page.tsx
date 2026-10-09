@@ -8,7 +8,7 @@ const AUDIO_URL = "/HompimpahHC/audio/track-01.mp4";
 
 const ARTISTS = [
   { name: "Muhammad Ade Mulya", role: "VOKAL", quote: "Suara adalah senjata." },
-  { name: "mr X", role: "GITAR", quote: "Riff bukan dekorasi." },
+  { name: "Adam", role: "GITAR", quote: "Riff bukan dekorasi." },
   { name: "Tisen 88", role: "BASS", quote: "Low-end yang menggetarkan." },
   { name: "Fachrizal", role: "DRUM", quote: "Chaos butuh beat." },
 ];
@@ -103,8 +103,9 @@ export default function Home() {
           <motion.div
             exit={{ opacity: 0, filter: "blur(20px)" }}
             transition={{ duration: 0.8, ease: "easeInOut" }}
-            className="fixed inset-0 z-[100] flex flex-col items-center justify-center bg-void-deep px-6"
+            className="fixed inset-0 z-[100] overflow-y-auto bg-void-deep [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]"
           >
+            <div className="flex min-h-full flex-col items-center justify-center px-6 py-8">
             <div className="w-full max-w-2xl font-body text-sm text-steel mb-6">
               <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.2 }} className="text-bone">&gt; INITIALIZING H2C_PROTOCOL...</motion.p>
               <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.6 }} className="mt-1">&gt; SCANNING FREQUENCY [432Hz]... <span className="text-acid">OK</span></motion.p>
@@ -118,7 +119,7 @@ export default function Home() {
               className="w-[40vw] max-w-xs"
             />
 
-            <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 2.4 }} className="text-steel text-[10px] tracking-[0.5em] mt-3 mb-6">HOMPIMPAH HARDCORE</motion.p>
+            <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 2.4 }} className="text-steel text-[10px] tracking-[0.5em] mt-8 mb-10">HOMPIMPAH HARDCORE</motion.p>
 
             <motion.button
               initial={{ opacity: 0, y: 20 }}
@@ -131,7 +132,9 @@ export default function Home() {
               [ MASUK ]
             </motion.button>
             <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 2.8 }} className="mt-6 text-steel text-[10px] tracking-widest">AUDIO AKAN OTOMATIS DIPUTAR</motion.p>
-          </motion.div>
+          
+          </div>
+        </motion.div>
         )}
       </AnimatePresence>
 
