@@ -4,7 +4,7 @@ import React, { useState, useRef, useEffect } from "react";
 import { motion, AnimatePresence, useScroll, useTransform } from "framer-motion";
 import { Play, Pause, MapPin, ArrowUpRight, Volume2, Instagram, Youtube, Music, Mail } from "lucide-react";
 
-const AUDIO_URL = "/audio/track-01.mp4";
+const AUDIO_URL = "/HompimpahHC/audio/track-01.mp4";
 
 const ARTISTS = [
   { name: "Muhammad Ade Mulya", role: "VOKAL", quote: "Suara adalah senjata." },
@@ -105,7 +105,7 @@ export default function Home() {
             transition={{ duration: 0.8, ease: "easeInOut" }}
             className="fixed inset-0 z-[100] flex flex-col items-center justify-center bg-void-deep px-6"
           >
-            <div className="w-full max-w-2xl font-body text-sm text-steel mb-10">
+            <div className="w-full max-w-2xl font-body text-sm text-steel mb-6">
               <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.2 }} className="text-bone">&gt; INITIALIZING H2C_PROTOCOL...</motion.p>
               <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.6 }} className="mt-1">&gt; SCANNING FREQUENCY [432Hz]... <span className="text-acid">OK</span></motion.p>
               <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 1.0 }} className="mt-1">&gt; LOADING SONIC WEAPONS... <span className="text-acid">OK</span></motion.p>
@@ -115,10 +115,10 @@ export default function Home() {
             <img
               src="/HompimpahHC/logo-h2c.png"
               alt="H2C"
-              className="w-[60vw] max-w-md"
+              className="w-[40vw] max-w-xs"
             />
 
-            <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 2.4 }} className="text-steel text-[10px] tracking-[0.5em] mt-4 mb-10">HOMPIMPAH HARDCORE</motion.p>
+            <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 2.4 }} className="text-steel text-[10px] tracking-[0.5em] mt-3 mb-6">HOMPIMPAH HARDCORE</motion.p>
 
             <motion.button
               initial={{ opacity: 0, y: 20 }}
