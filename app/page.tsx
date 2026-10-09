@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import React, { useState, useRef, useEffect, useCallback } from "react";
 import {
@@ -676,18 +676,31 @@ export default function Home() {
           <section id="press" className="px-6 md:px-10 py-20 md:py-28 border-t border-steel/30 scroll-mt-16">
             <SectionHeader index="04" title="PRESS KIT" />
             <div className="grid sm:grid-cols-2 md:grid-cols-3 gap-6 mt-12 md:mt-16">
-              {[
-                { title: "EPK", desc: "PDF // 2MB" },
-                { title: "PHOTOS", desc: "ZIP // 45MB" },
-                { title: "RIDER", desc: "PDF // 500KB" },
-              ].map((item, i) => (
+              {([
+                { title: "EPK", desc: "PDF // 211 KB", href: "/HompimpahHC/press-kit/epk.pdf", file: "epk.pdf" },
+                { title: "PHOTOS", desc: "ZIP // SEGERA", href: "", file: "" },
+                { title: "RIDER", desc: "PDF // 217 KB", href: "/HompimpahHC/press-kit/technical-rider.pdf", file: "Technical-Rider.pdf" },
+              ] as { title: string; desc: string; href: string; file: string }[]).map((item, i) => (
                 <Reveal3D key={i} dir={i - 1} depth={1.1}>
                   <TiltCard className="h-full">
-                    <a href="#" className="border border-steel/30 hover:border-acid p-8 flex flex-col gap-6 transition-colors group h-full bg-void/40">
-                      <span className="text-[10px] tracking-[0.3em] text-steel group-hover:text-acid transition-colors">{item.desc}</span>
-                      <h4 className="editorial-text text-3xl text-bone group-hover:text-acid transition-colors">{item.title}</h4>
-                      <ArrowUpRight className="w-5 h-5 text-steel group-hover:text-acid group-hover:translate-x-1 group-hover:-translate-y-1 transition-all mt-auto" />
-                    </a>
+                    {item.href ? (
+                      <a
+                        href={item.href}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="border border-steel/30 hover:border-acid p-8 flex flex-col gap-6 transition-colors group h-full bg-void/40"
+                      >
+                        <span className="text-[10px] tracking-[0.3em] text-steel group-hover:text-acid transition-colors">{item.desc}</span>
+                        <h4 className="editorial-text text-3xl text-bone group-hover:text-acid transition-colors">{item.title}</h4>
+                        <ArrowUpRight className="w-5 h-5 text-steel group-hover:text-acid group-hover:translate-x-1 group-hover:-translate-y-1 transition-all mt-auto" />
+                      </a>
+                    ) : (
+                      <div className="border border-steel/20 p-8 flex flex-col gap-6 h-full bg-void/40 opacity-50 cursor-not-allowed" aria-disabled="true">
+                        <span className="text-[10px] tracking-[0.3em] text-steel">{item.desc}</span>
+                        <h4 className="editorial-text text-3xl text-bone">{item.title}</h4>
+                        <ArrowUpRight className="w-5 h-5 text-steel mt-auto" />
+                      </div>
+                    )}
                   </TiltCard>
                 </Reveal3D>
               ))}
