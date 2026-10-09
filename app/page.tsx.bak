@@ -28,17 +28,7 @@ const SHOWS = [
 
 const TICKER_ITEMS = ["RAW ENERGY", "FUTURE ANARCHY", "JAKARTA HARDCORE", "NO COMPROMISE", "H2C // 2019", "SONIC WEAPON", "SYSTEM OVERRIDE"];
 
-function AnimatedText({
-  text,
-  className = "",
-  delay = 0,
-  as = "span"
-}: {
-  text: string;
-  className?: string;
-  delay?: number;
-  as?: React.ElementType;
-}) {
+function AnimatedText({ text, className = "", delay = 0, as = "span" }) {
   const Tag = as;
   const letters = text.split("");
   return (
@@ -63,7 +53,7 @@ export default function Home() {
   const [entered, setEntered] = useState(false);
   const [playing, setPlaying] = useState(false);
   const [progress, setProgress] = useState(0);
-  const audioRef = useRef<HTMLAudioElement>(null);
+  const audioRef = useRef(null);
   const { scrollYProgress } = useScroll();
   const heroOpacity = useTransform(scrollYProgress, [0, 0.15], [1, 0]);
 
@@ -374,7 +364,7 @@ export default function Home() {
   );
 }
 
-function SectionHeader({ index, title }: { index: string; title: string }) {
+function SectionHeader({ index, title }) {
   return (
     <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="flex items-end justify-between border-b border-steel/30 pb-6">
       <div>
@@ -385,13 +375,13 @@ function SectionHeader({ index, title }: { index: string; title: string }) {
   );
 }
 
-function StatusBadge({ status }: { status: string }) {
+function StatusBadge({ status }) {
   if (status === "SOLD OUT") return <span className="text-warm animate-pulse">&#9679; SOLD OUT</span>;
   if (status === "SELLING FAST") return <span className="text-acid animate-pulse">&#9679; SELLING FAST</span>;
   return <span className="text-steel">&#9679; TICKETS AVAILABLE</span>;
 }
 
-function Field({ label, placeholder, type = "text" }: { label: string; placeholder: string; type?: string }) {
+function Field({ label, placeholder, type = "text" }) {
   return (
     <div>
       <label className="text-[10px] tracking-[0.3em] text-steel block mb-2">{label}</label>
